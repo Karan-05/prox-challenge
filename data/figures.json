@@ -1,0 +1,205 @@
+[
+  {
+    "id": "front-panel-controls",
+    "file": "/manual/figures/front-panel-controls.png",
+    "source": "owner-manual.pdf",
+    "page": 8,
+    "title": "Front Panel Controls"
+  },
+  {
+    "id": "interior-controls",
+    "file": "/manual/figures/interior-controls.png",
+    "source": "owner-manual.pdf",
+    "page": 9,
+    "title": "Interior Controls (wire feed compartment)"
+  },
+  {
+    "id": "spool-loading-small",
+    "file": "/manual/figures/spool-loading-small.png",
+    "source": "owner-manual.pdf",
+    "page": 10,
+    "title": "1-2 lb Wire Spool Loading"
+  },
+  {
+    "id": "spool-loading-large",
+    "file": "/manual/figures/spool-loading-large.png",
+    "source": "owner-manual.pdf",
+    "page": 11,
+    "title": "10-12 lb Wire Spool Loading (with adapter)"
+  },
+  {
+    "id": "feed-tensioner-idler",
+    "file": "/manual/figures/feed-tensioner-idler.png",
+    "source": "owner-manual.pdf",
+    "page": 11,
+    "title": "Feed Tensioner and Idler Arm"
+  },
+  {
+    "id": "feed-roller-grooves",
+    "file": "/manual/figures/feed-roller-grooves.png",
+    "source": "owner-manual.pdf",
+    "page": 12,
+    "title": "Feed Roller grooves: solid-core V-groove vs flux-cored knurled"
+  },
+  {
+    "id": "polarity-dcen-flux-cored",
+    "file": "/manual/figures/polarity-dcen-flux-cored.png",
+    "source": "owner-manual.pdf",
+    "page": 13,
+    "title": "DCEN polarity hookup for Flux-Cored (gasless) welding"
+  },
+  {
+    "id": "polarity-dcep-mig",
+    "file": "/manual/figures/polarity-dcep-mig.png",
+    "source": "owner-manual.pdf",
+    "page": 14,
+    "title": "DCEP polarity hookup for solid-core MIG (gas) welding"
+  },
+  {
+    "id": "gas-cylinder-setup",
+    "file": "/manual/figures/gas-cylinder-setup.png",
+    "source": "owner-manual.pdf",
+    "page": 14,
+    "title": "Shielding gas cylinder and regulator setup"
+  },
+  {
+    "id": "wire-threading",
+    "file": "/manual/figures/wire-threading.png",
+    "source": "owner-manual.pdf",
+    "page": 15,
+    "title": "Threading welding wire into the feed mechanism"
+  },
+  {
+    "id": "duty-cycle-charts",
+    "file": "/manual/figures/duty-cycle-charts.png",
+    "source": "owner-manual.pdf",
+    "page": 19,
+    "title": "Rated duty cycle clocks: 120VAC and 240VAC"
+  },
+  {
+    "id": "ground-clamp-workpiece",
+    "file": "/manual/figures/ground-clamp-workpiece.png",
+    "source": "owner-manual.pdf",
+    "page": 19,
+    "title": "Ground clamp to bare metal on workpiece"
+  },
+  {
+    "id": "lcd-settings-flow",
+    "file": "/manual/figures/lcd-settings-flow.png",
+    "source": "owner-manual.pdf",
+    "page": 20,
+    "title": "LCD settings screens: process, polarity/gas, diameter/thickness, auto weld"
+  },
+  {
+    "id": "gun-angles-push-drag",
+    "file": "/manual/figures/gun-angles-push-drag.png",
+    "source": "owner-manual.pdf",
+    "page": 22,
+    "title": "MIG gun angles: fillet/butt joints and push vs drag"
+  },
+  {
+    "id": "tig-setup-cables",
+    "file": "/manual/figures/tig-setup-cables.png",
+    "source": "owner-manual.pdf",
+    "page": 24,
+    "title": "TIG setup: torch in negative socket, ground clamp in positive"
+  },
+  {
+    "id": "tungsten-sharpening",
+    "file": "/manual/figures/tungsten-sharpening.png",
+    "source": "owner-manual.pdf",
+    "page": 26,
+    "title": "Sharpening the tungsten electrode"
+  },
+  {
+    "id": "tig-torch-assembly",
+    "file": "/manual/figures/tig-torch-assembly.png",
+    "source": "owner-manual.pdf",
+    "page": 26,
+    "title": "TIG torch assembly (collet, collet body, ceramic nozzle)"
+  },
+  {
+    "id": "stick-setup-cables",
+    "file": "/manual/figures/stick-setup-cables.png",
+    "source": "owner-manual.pdf",
+    "page": 27,
+    "title": "Stick setup: electrode holder in positive socket, ground clamp in negative"
+  },
+  {
+    "id": "strike-test",
+    "file": "/manual/figures/strike-test.png",
+    "source": "owner-manual.pdf",
+    "page": 34,
+    "title": "Strike test: good weld bends, poor weld snaps"
+  },
+  {
+    "id": "weld-penetration-scale",
+    "file": "/manual/figures/weld-penetration-scale.png",
+    "source": "owner-manual.pdf",
+    "page": 35,
+    "title": "Weld penetration: inadequate / proper / excess, with corrections"
+  },
+  {
+    "id": "wire-weld-examples",
+    "file": "/manual/figures/wire-weld-examples.png",
+    "source": "owner-manual.pdf",
+    "page": 35,
+    "title": "Example wire weld diagrams: good weld + 5 defect patterns"
+  },
+  {
+    "id": "wire-weld-porosity",
+    "file": "/manual/figures/wire-weld-porosity.png",
+    "source": "owner-manual.pdf",
+    "page": 37,
+    "title": "Wire weld porosity: small cavities or holes in the bead"
+  },
+  {
+    "id": "stick-weld-examples",
+    "file": "/manual/figures/stick-weld-examples.png",
+    "source": "owner-manual.pdf",
+    "page": 38,
+    "title": "Example stick weld diagrams: good weld + 6 defect patterns"
+  },
+  {
+    "id": "wiring-schematic",
+    "file": "/manual/figures/wiring-schematic.png",
+    "source": "owner-manual.pdf",
+    "page": 45,
+    "title": "Wiring schematic"
+  },
+  {
+    "id": "assembly-diagram",
+    "file": "/manual/figures/assembly-diagram.png",
+    "source": "owner-manual.pdf",
+    "page": 47,
+    "title": "Assembly diagram (exploded parts view)"
+  },
+  {
+    "id": "qs-cable-stick",
+    "file": "/manual/figures/qs-cable-stick.png",
+    "source": "quick-start-guide.pdf",
+    "page": 2,
+    "title": "Quick start: Stick cable setup"
+  },
+  {
+    "id": "qs-cable-mig-flux",
+    "file": "/manual/figures/qs-cable-mig-flux.png",
+    "source": "quick-start-guide.pdf",
+    "page": 2,
+    "title": "Quick start: MIG + Flux cable setup"
+  },
+  {
+    "id": "qs-cable-tig",
+    "file": "/manual/figures/qs-cable-tig.png",
+    "source": "quick-start-guide.pdf",
+    "page": 2,
+    "title": "Quick start: TIG cable setup"
+  },
+  {
+    "id": "selection-chart",
+    "file": "/manual/figures/selection-chart.png",
+    "source": "selection-chart.pdf",
+    "page": 1,
+    "title": "Welding process selection chart (How to choose)"
+  }
+]

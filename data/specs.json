@@ -1,0 +1,122 @@
+{
+  "product": {
+    "name": "Vulcan OmniPro 220 Multiprocess Welding System",
+    "item": "57812",
+    "brand": "Vulcan (Harbor Freight Tools)",
+    "processes": ["MIG (solid core, gas shielded)", "Flux-Cored (gasless)", "DC TIG", "Stick"],
+    "input": "Dual voltage: 120VAC or 240VAC, 60 Hz (dedicated cord for each; plug only fits one way)",
+    "maxOCV": "86 VDC",
+    "support": "1-800-444-3353 / productsupport@harborfreight.com",
+    "warranty": "Limited 90-day (Harbor Freight Tools)"
+  },
+  "specifications": {
+    "MIG": {
+      "page": 7,
+      "currentInputAtOutput": { "120V": "20.8A at 100A", "240V": "25.5A at 200A" },
+      "weldingCurrentRange": { "120V": "30-140A", "240V": "30-220A" },
+      "weldableMaterials": "Mild steel, stainless steel, aluminum (with optional spool gun)",
+      "wireCapacity": { "solidCore": ["0.025\"", "0.030\"", "0.035\""], "fluxCored": ["0.030\"", "0.035\"", "0.045\""] },
+      "wireSpeed": "50-500 IPM",
+      "spoolCapacity": "Up to 12 lb spool"
+    },
+    "TIG": {
+      "page": 7,
+      "currentInputAtOutput": { "120V": "20.6A at 125A", "240V": "15.6A at 175A" },
+      "weldingCurrentRange": { "120V": "10-125A", "240V": "10-175A" },
+      "weldableMaterials": "Mild steel, stainless steel, chrome moly (DC TIG only — no AC TIG, so no aluminum TIG)"
+    },
+    "Stick": {
+      "page": 7,
+      "currentInputAtOutput": { "120V": "19.5A at 80A", "240V": "23.7A at 175A" },
+      "weldingCurrentRange": { "120V": "10-80A", "240V": "10-175A" },
+      "weldableMaterials": "Mild steel, stainless steel"
+    }
+  },
+  "dutyCycle": {
+    "definition": "Minutes of welding allowed within a 10-minute period at a given current without overheating (pages 19, 29). Thermal protection auto-shuts down on overheat and shows a warning screen; welder returns to service after cooling. Leave power ON while cooling so the fan runs.",
+    "MIG": {
+      "120V": { "rated": { "percent": 40, "amps": 100, "weldMinutes": 4, "restMinutes": 6 }, "continuous100pct": 75 },
+      "240V": { "rated": { "percent": 25, "amps": 200, "weldMinutes": 2.5, "restMinutes": 7.5 }, "continuous100pct": 115 },
+      "page": [7, 19]
+    },
+    "TIG": {
+      "120V": { "rated": { "percent": 40, "amps": 125, "weldMinutes": 4, "restMinutes": 6 }, "continuous100pct": 90 },
+      "240V": { "rated": { "percent": 30, "amps": 175, "weldMinutes": 3, "restMinutes": 7 }, "continuous100pct": 105 },
+      "page": [7, 29]
+    },
+    "Stick": {
+      "120V": { "rated": { "percent": 40, "amps": 80, "weldMinutes": 4, "restMinutes": 6 }, "continuous100pct": 60 },
+      "240V": { "rated": { "percent": 25, "amps": 175, "weldMinutes": 2.5, "restMinutes": 7.5 }, "continuous100pct": 100 },
+      "page": [7, 29]
+    }
+  },
+  "polarity": {
+    "MIG_solid_core_gas": {
+      "name": "DCEP (Direct Current Electrode Positive)",
+      "wireFeedPowerCable": "POSITIVE (+) socket",
+      "groundClamp": "NEGATIVE (−) socket",
+      "gas": "Required — see settings chart inside door; C25 common for steel, Stainless Tri-Mix for stainless; 20-30 SCFH",
+      "page": [14, 20]
+    },
+    "FluxCored_gasless": {
+      "name": "DCEN (Direct Current Electrode Negative)",
+      "wireFeedPowerCable": "NEGATIVE (−) socket",
+      "groundClamp": "POSITIVE (+) socket",
+      "gas": "None",
+      "page": 13
+    },
+    "TIG": {
+      "name": "DCEN (torch negative)",
+      "tigTorchCable": "NEGATIVE (−) socket",
+      "groundClamp": "POSITIVE (+) socket",
+      "gas": "100% Argon, 10-25 SCFH",
+      "accessories": "TIG torch and foot pedal sold separately; foot pedal connects to Foot Pedal Socket inside welder; leave wire feed power disconnected",
+      "page": [24, 30]
+    },
+    "Stick": {
+      "name": "DCEP (electrode positive)",
+      "electrodeHolderCable": "POSITIVE (+) socket",
+      "groundClamp": "NEGATIVE (−) socket",
+      "gas": "None",
+      "page": [27, 32]
+    },
+    "note": "Cables twist clockwise all the way to lock. Polarity screen on LCD shows correct hookup per process (page 20)."
+  },
+  "wireFeed": {
+    "tension": { "solidWire": "3-5 on the Feed Tensioner", "fluxCored": "2-3 (too much force crushes flux-cored wire)", "page": 15 },
+    "feedRoller": {
+      "solidCoreVGroove": ["0.030/0.035 groove", "0.025 groove"],
+      "fluxCoredKnurledGroove": ["0.045 groove", "0.030/0.035 groove"],
+      "rule": "Flip/replace roller so the number showing matches the wire diameter on the spool; V-groove for solid, knurled for flux-cored",
+      "page": 12
+    },
+    "spoolDirection": "Wire must unwind CLOCKWISE (pages 10-11)",
+    "stickout": "Cut wire to 1/2\" from tip (1/2\" stickout); CTWD under 1/2\" while welding",
+    "driveTensionTest": "Feed wire against wood 2-3\" away; wire should bend, not stop. Wire stops feeding 3 seconds after trigger press with no arc (page 17)"
+  },
+  "gasSettings": {
+    "MIG": { "flow": "20-30 SCFH", "typical": { "mildSteel": "C25 (75% Argon / 25% CO2); C100 needs the included CGA 580/320 adapter", "stainless": "Stainless Tri-Mix" }, "page": [14, 20] },
+    "TIG": { "flow": "10-25 SCFH", "gas": "100% Argon", "page": 30 }
+  },
+  "tig": {
+    "electrodeStickout": "Tip protrudes 1/8\"-1/4\" beyond ceramic nozzle",
+    "grind": "Grind parallel to length; conical tip 2-2.5x electrode diameter; dedicated grinding wheel",
+    "arcGap": "Keep tungsten-to-work distance 1-1.5x electrode diameter",
+    "torchAngle": "Tilt 10-15 degrees back from vertical once puddle forms",
+    "page": [26, 31]
+  },
+  "stick": {
+    "arcStart": "Tap, stroke, or strike like a match; then lift off the workpiece the same distance as the bare-metal end diameter, tilt back 10-20 degrees, drag to the back of the puddle",
+    "page": 33
+  },
+  "lcdOptions": {
+    "MIG_Flux": ["Run-In WFS (% of preset wire feed speed before wire contacts work)", "Inductance (increase = more fluid puddle, flatter bead; decrease = colder puddle)", "Spot Timer", "Recall Setting", "Save Setting (5 slots)"],
+    "TIG": ["Recall Setting", "Save Setting (5 slots)"],
+    "Stick": ["Hot Start (amperage boost at weld start)", "Arc Force (penetration/smoothness)", "Recall Setting", "Save Setting (5 slots)"],
+    "page": [21, 31, 33]
+  },
+  "power": {
+    "outlet": "Properly grounded, GFCI-protected 120VAC (20A rated) or 240VAC receptacle; delayed-action breaker or fuses; NO extension cords (pages 6, 16, 25)",
+    "resetButton": "Overload protector Reset Button on back of machine (pages 43, 46)"
+  }
+}
