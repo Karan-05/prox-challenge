@@ -33,28 +33,31 @@ Express server (server/)
         │    read_manual_page(page)    → original page image (vision escape hatch)
         │    show_figure(id, caption)  → emits figure directive → UI renders image
         │    get_specs(topic)          → exact structured data (duty cycle, polarity…)
+        │    calculate_duty_cycle(...) → validated native calculator card
+        │    select_process(...)       → chart-grounded native decision card
         └─ session resume per conversation id
 data/
    ├─ knowledge/*.md   (hand-verified, page-cited)
    ├─ specs.json       (exact numbers for widgets + get_specs)
-   └─ figures.json     (figure catalog: id, file, page, title, keywords)
+   └─ figures.json     (figure catalog: id, file, source, page, title)
 web/public/manual/     (all page renders + figure crops)
 ```
 
 ## Multimodal response system
 
-Three tiers, in order of preference for a given answer:
+Four tiers, in order of preference for a given answer:
 
 1. **Manual figures** (`show_figure`) — when the answer relates to a real image in the manual (polarity hookups, wire-feed mechanism, weld diagnosis photos, selection chart, wiring schematic). Ground truth beats a redrawing.
-2. **Generated artifacts** — fenced blocks (```artifact:react / artifact:svg / artifact:html) streamed in the reply, rendered client-side in a sandboxed iframe (React 18 UMD + Babel standalone + Tailwind CDN — the reverse-engineered Claude-artifacts approach). Used for interactive content: duty-cycle calculators, settings configurators, troubleshooting flowcharts, custom diagrams.
-3. **Inline SVG/markdown** for simple visual aids.
+2. **Trusted native widgets** — typed server-validated duty-cycle and process-selection events rendered by the application.
+3. **Generated artifacts** — fenced blocks (```artifact:react / artifact:svg / artifact:html) streamed in the reply, rendered client-side in a sandboxed iframe. Used for novel troubleshooting flowcharts and custom diagrams, never as the source of exact machine values.
+4. **Inline SVG/markdown** for simple visual aids.
 
 Exact numbers inside artifacts must come from tool results (specs.json), never invented — enforced via system prompt + get_specs tool.
 
 ## Knowledge extraction
 
 - All 51 PDF pages rendered to PNG at build time (committed; evaluators never rerun extraction).
-- ~20 curated figure crops with metadata (id, title, page, keywords) in figures.json.
+- 29 curated figure crops with metadata (id, title, source, page) in figures.json.
 - knowledge/*.md authored from a full manual read, organized by task (setup-mig-flux, polarity-and-cables, duty-cycle, weld-diagnosis, troubleshooting, tig, stick, controls-ui, specs, selection-chart, safety, parts, maintenance). Every fact carries its page number.
 - specs.json holds the tables machines: duty cycles (3 processes × 2 voltages), current ranges, wire/tensioner settings, polarity map, gas settings. Powers both get_specs and generated calculators.
 - Known gap handled honestly: the manual does not publish a full WFS/voltage matrix per material thickness (the machine's synergic mode computes it; the door chart shows menu flows). The settings advisor therefore reports the manual's auto-set procedure + ranges, and labels rule-of-thumb starting points as guidance, not manual data.
@@ -72,9 +75,10 @@ Exact numbers inside artifacts must come from tool results (specs.json), never i
 
 ## Testing
 
-- `npm run eval`: scripted run of the README's hard questions + cross-referencing and ambiguity probes; asserts key facts (e.g. "25%" for MIG 200A@240V, DCEN for flux-core, TIG torch→negative) appear in answers.
-- Manual UI pass for artifact rendering + figure surfacing.
+- `npm run check`: typecheck, data/asset integrity, 25-case retrieval benchmark, and production build.
+- `npm run eval`: 12-case live smoke benchmark; `npm run eval:full`: 26 cases × 3 runs.
+- `npm run test:ui`: Chrome E2E assertions for figures, native widgets, evidence, citations, and generated-artifact execution.
 
 ## Out of scope (noted in README as future work)
 
-Hosting (README documents one-click Render/Fly deployment), TTS voice output, multi-product generalization.
+TTS voice output, shared session/rate storage for multi-replica hosting, and multi-product generalization.

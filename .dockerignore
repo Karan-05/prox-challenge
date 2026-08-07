@@ -1,0 +1,13 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+node_modules
+web/dist
+.firecrawl
+**/__pycache__
+**/*.pyc
+*.log
+docs/screenshots
+eval/results/*.json

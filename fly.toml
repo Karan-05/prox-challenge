@@ -2,6 +2,11 @@
 app = "omnipro-agent"
 primary_region = "sjc"
 
+[env]
+  MAX_BUDGET_USD_PER_TURN = "0.75"
+  AGENT_TIMEOUT_MS = "180000"
+  RATE_LIMIT_REQUESTS = "20"
+
 [build]
 
 [http_service]

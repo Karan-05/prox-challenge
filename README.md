@@ -1,113 +1,167 @@
-# OmniPro 220 Assistant — a multimodal reasoning agent for a real machine
+# OmniPro Copilot
 
-A locally-runnable expert assistant for the **Vulcan OmniPro 220** multiprocess welder (MIG / Flux-Cored / DC TIG / Stick), built on the **Claude Agent SDK**. Ask it anything about the machine and it answers like a knowledgeable welding buddy — grounded in the 48-page owner's manual with page citations, and **not just in text**: it surfaces the manual's actual diagrams, draws its own, and generates live interactive tools (calculators, configurators, flowcharts) right in the chat.
+### A multimodal, evidence-first reasoning agent for a real industrial machine
 
-![Interactive duty cycle calculator generated live by the agent](docs/screenshots/duty-cycle-artifact.png)
+[![Submission quality](https://github.com/Karan-05/prox-challenge/actions/workflows/ci.yml/badge.svg)](https://github.com/Karan-05/prox-challenge/actions/workflows/ci.yml)
 
-> The screenshot above is a real response: asked about duty cycle, the agent surfaced the manual's own duty-cycle chart (p.19), then generated a working React calculator — process/voltage toggles, an amperage slider with color-coded 100%-continuous / rated / beyond-rated zones — with every number pulled from structured spec data, not from memory.
+OmniPro Copilot helps someone standing in their garage operate and troubleshoot a **Vulcan OmniPro 220** welder. It is grounded in the complete owner’s manual, quick-start guide, and image-only process chart; cites exact pages; surfaces the original diagrams; accepts weld photos; and renders trusted interactive tools inside the conversation.
 
-## Run it (under 2 minutes)
+![A tool-verified duty-cycle card beside the original manual chart](docs/screenshots/duty-cycle-artifact.png)
+
+The screenshot is a real response. The calculator is not arbitrary model-written code: `calculate_duty_cycle` validates the inputs against `specs.json`, emits a typed UI event, and labels the result as exact, conservative, continuous, or unpublished. The manual’s p.19 chart appears beside it, citations open the original page, and the evidence drawer records which sources the agent actually used.
+
+## Run it in under two minutes
 
 ```bash
 git clone https://github.com/Karan-05/prox-challenge.git
 cd prox-challenge
-cp .env.example .env        # paste your Anthropic API key
+cp .env.example .env        # add your Anthropic API key
 npm install
-npm run dev                 # → http://localhost:5173
+npm run dev                 # http://localhost:5173
 ```
 
-Requirements: Node 18+ and an `ANTHROPIC_API_KEY`. That's it — no database, no embedding step, no Python. (`npm start` builds and serves everything on one port, `:3001`, if you prefer a single process.)
+Requirements: Node 20+ and `ANTHROPIC_API_KEY`. There is no database, embedding job, or Python runtime. For a single production-style process, use `npm start` and open `http://localhost:3001`.
 
-Try the suggestion chips, or these:
+Try these:
 
-- *"What's the duty cycle for MIG welding at 200A on 240V?"* → exact answer (25%, 2½ min weld / 7½ min rest) with the manual's chart and a live calculator
-- *"I'm getting porosity in my flux-cored welds"* → cross-referenced diagnosis (polarity → DCEN, cleanliness, CTWD…) with the manual's defect photos
-- *"What polarity setup do I need for TIG?"* → the real hookup diagram from p.24, torch→negative, ground→positive
-- *"Which process should I use for 16-gauge sheet?"* → reasoning over the image-only selection chart
-- *"Can I TIG weld aluminum with this?"* → correctly says no (DC TIG only) and routes you to the spool-gun option
-- **Drop in a photo of your weld bead** (📷 button or drag & drop) → the agent describes what it sees, matches it to the manual's defect charts, shows the matching chart beside your photo, and gives the causes→fixes for that pattern. In testing it even caught that a "user photo" was actually the manual's own porosity diagram — and said so before diagnosing.
+- “What’s the duty cycle for MIG at 200A on 240V?” — exact 25% result, native calculator, original chart, clickable evidence.
+- “I’m getting porosity in my flux-cored welds.” — cross-references polarity, CTWD, cleanliness, gas, troubleshooting, and defect figures.
+- “Which socket gets the TIG ground clamp?” — surfaces the p.24 hookup diagram and answers ground positive / torch negative.
+- “Which process should I use for 16-gauge sheet steel?” — converts the image-only selection chart into a deterministic decision card.
+- “Can I TIG aluminum?” — correctly refuses the premise: this machine is DC TIG only and aluminum requires MIG with the optional spool gun.
+- Drop in a weld photo — visually describes the bead, compares it with the manual’s defect examples, and returns causes and corrections.
+- “Build a clickable unstable-arc troubleshooting flowchart.” — generates a sandboxed custom artifact and reports whether it rendered successfully.
 
-There's also a scripted accuracy check: `npm run eval` runs the hard questions end-to-end and asserts the key facts, figures, and artifacts appear — including cross-referencing probes (birdnesting → tension + tip + liner across three manual sections), out-of-scope honesty (spool-gun WFS), and safety cross-refs (vehicle welding → battery disconnect). Current result: **9/9**.
+## What makes this more than PDF chat
 
-## How it works
+### 1. Three complementary ground-truth layers
 
+- `data/knowledge/*.md`: 16 task-oriented, human-verified knowledge files with source-page provenance.
+- `data/specs.json`: exact structured values for duty cycles, ranges, polarity, gas, and feed settings.
+- `web/public/manual`: all 51 source pages plus 29 addressable figure crops.
+
+The corpus is small enough that a curated, auditable representation is more reliable than an opaque embedding index. A deterministic BM25-style retriever with a small welding synonym map handles paraphrases; `read_manual_page` remains a vision escape hatch to the primary source.
+
+### 2. Evidence is part of the interface
+
+Technical answers are not merely instructed to cite. Search, spec, figure, page-reading, and widget tools emit structured evidence events. The UI deduplicates them by source page, displays a source drawer, and turns citations such as `[p.19]` and `[chart p.1]` into direct links to the committed page image.
+
+### 3. Trusted widgets and creative artifacts are separate
+
+Exact decisions use typed, deterministic tools:
+
+- `calculate_duty_cycle(process, voltage, amps)`
+- `select_process(material, gauge, environment, priority)`
+
+The model can still generate React, SVG, or HTML for novel visual explanations. Those artifacts run in a script-only sandbox with an explicit CSP, no outbound `connect-src`, runtime error reporting, a readiness handshake, automatic sizing, and a 12-second render watchdog. A generated artifact can enrich an answer; it cannot override trusted numerical tools.
+
+### 4. Bidirectional multimodality
+
+The agent sends original manual diagrams and native/generated interactive visuals out. Users can send weld-bead or machine photos in. Images are downscaled in the browser, type/size validated again on the server, and passed as image blocks through the Claude Agent SDK.
+
+### 5. A product-grade interaction layer
+
+The responsive UI includes workflow launchers, a multiline keyboard-aware composer, photo drag-and-drop, voice input, live agent/tool states, pinned scrolling that respects users reading earlier content, a “jump to latest” control, copyable responses, animated evidence drawers, accessible figure lightboxes, mobile-specific layouts, and reduced-motion support. The browser harness checks both landing-page viewports and real streamed agent responses.
+
+## Architecture
+
+```text
+Browser — React chat, streaming SSE
+  ├─ clickable citations + structured evidence drawer
+  ├─ FigureCard: original manual images with zoom
+  ├─ WidgetCard: typed duty-cycle / process-selection tools
+  └─ ArtifactFrame: sandboxed generated React/SVG/HTML
+       │
+Express /api/chat
+  ├─ rate, size, concurrency, timeout, session, and cost limits
+  └─ Claude Agent SDK query()
+       ├─ search_manual            deterministic BM25-style retrieval
+       ├─ get_specs               exact structured source data
+       ├─ calculate_duty_cycle    validated calculation + native UI event
+       ├─ select_process          chart-backed decision + native UI event
+       ├─ show_figure             streams primary-source evidence to the UI
+       └─ read_manual_page        vision access to the original page
 ```
-Browser ── React chat (Vite) ── streaming SSE
-  │   ├─ Markdown renderer with inline page citations
-  │   ├─ FigureCard  → real manual images, zoomable, captioned with page refs
-  │   └─ ArtifactFrame → sandboxed iframe running agent-written React/SVG/HTML
-  ▼
-Express ── /api/chat ── Claude Agent SDK query()
-  │   custom in-process MCP tools:
-  │   ├─ search_manual(query)      lexical search over the curated knowledge base
-  │   ├─ get_specs(topic)          exact structured data (duty cycles, polarity map…)
-  │   ├─ show_figure(id, caption)  streams a manual figure into the chat mid-answer
-  │   └─ read_manual_page(source, page)  vision escape hatch: the original page image
-  ▼
-data/  ── knowledge/*.md (16 hand-verified, page-cited files)
-       ── specs.json (machine-readable spec tables) · figures.json (29-figure catalog)
-web/public/manual/ ── all 51 PDF pages + 29 curated figure crops as PNGs
+
+One turn is one bounded agent loop. There is no decorative “agent swarm”: the problem benefits from strong retrieval and typed tools, not orchestration theater. The SDK has no Bash/filesystem tools, loads no local Claude settings, and runs in `dontAsk` mode with only the six manual MCP tools allowlisted.
+
+## Evaluation and scoring
+
+The repository has three distinct quality gates:
+
+```bash
+npm run check             # free: types + data integrity + retrieval + production build
+npm run eval              # paid: 12-case live smoke benchmark, one run
+npm run eval:full         # paid: 26 cases × 3 runs for variance
 ```
 
-**One turn, concretely:** your question hits `query()` with a system prompt that carries the agent's persona, the accuracy rules, and the full figure catalog. The agent searches the knowledge base, pulls exact numbers from `specs.json`, and streams its answer. When it calls `show_figure`, the tool handler pushes a figure event straight onto the SSE stream — the image appears in the chat at the exact point of the answer where the agent referenced it. Artifact code blocks (```` ```artifact:react ````) are detected client-side and rendered in a sandboxed iframe. Multi-turn context uses the SDK's session resume.
+Current deterministic results:
 
-## Knowledge extraction — the part that makes it accurate
+- **Data integrity:** 16 knowledge files, 51 pages, 29 figures; canonical tool outputs agree with structured source data.
+- **Retrieval:** **100% recall@4, 0.919 MRR** across 34 paraphrased queries — including garage phrasing like "how long can I weld before it shuts off" and "gasless wire hookup".
+- **Browser E2E:** verified real TIG, duty-cycle, and generated-artifact responses; correct figures/widgets/evidence; zero response or iframe errors.
+- **Live smoke:** **12/12 passed (100%)** on the current release candidate; p95 87.2s, $1.031 total estimated cost. [Inspect the sanitized JSON report](docs/benchmark/smoke-latest.json).
 
-The manual is 48 pages of mixed text, tables, labeled diagrams, decision matrices, and photos — and some critical content (the process selection chart, the weld diagnosis examples, the wiring schematic) exists **only as images**. Rather than stuffing PDFs into context or building a lossy RAG index, I converted the corpus once, by hand, into three complementary representations (all committed, nothing to re-run):
+The live suite covers exact facts, cross-referencing, exact figure IDs, evidence pages, native widget types, abstention, ambiguity, prompt injection, safety, multi-turn context, vision, and artifact generation. It records model, git commit, cost, latency, per-category results, and failure evidence as JSON. See [the benchmark methodology](docs/BENCHMARK.md).
 
-1. **`data/knowledge/*.md`** — 16 curated files organized by *task* (polarity & cables, duty cycle, MIG/flux setup, weld diagnosis, troubleshooting, …), written from a complete read of all three PDFs. Every fact carries its page number, so the agent cites `[p.19]` and you can check it. Image-only content (selection chart, defect photo captions, schematic topology) was transcribed into text so it's searchable too.
-2. **`data/specs.json`** — the numbers as data: all six duty-cycle matrices, current ranges, the per-process polarity map, gas flows, tensioner settings. This powers `get_specs`, so numbers in answers and generated calculators are *copied*, never recalled from model weights.
-3. **Image assets** — every page rendered to PNG plus 29 curated figure crops (`scripts/extract_assets.py`, poppler + Pillow), cataloged in `figures.json` with ids, titles, pages, and keywords. These are what `show_figure` surfaces and what `read_manual_page` lets the agent *look at* when a question outruns the curated text.
+## Knowledge extraction
 
-Honesty is designed in: the manual doesn't publish a WFS/voltage-per-thickness matrix (the machine's synergic Auto Weld mode computes it). The knowledge base says so explicitly, and the agent is instructed to give the manual-backed procedure first and label any rule-of-thumb as general guidance — instead of inventing numbers that look authoritative.
+The 48-page manual mixes prose, tables, annotated machinery diagrams, decision matrices, schematics, and weld examples. Critical material exists only in images. The one-time extraction pipeline:
 
-## Multimodal responses — three tiers
+1. Renders every PDF page at 150 DPI.
+2. Crops and catalogs 29 judge-relevant figures.
+3. Transcribes visual-only knowledge into cited task documents.
+4. Separates exact repeated numbers into `specs.json`.
+5. Runs integrity assertions against asset counts, page references, duplicated canonical facts, and deterministic tool outputs.
 
-1. **Real manual figures first.** For anything the manual already illustrates (polarity hookups, wire-feed mechanism, defect examples…), ground truth beats a redrawing. The agent picks from the 29-figure catalog embedded in its system prompt.
-2. **Generated interactive artifacts** for cognitively heavy answers — Claude-Artifacts-style. The agent emits `artifact:react|svg|html` fenced blocks; the client renders them in a sandboxed iframe (`sandbox="allow-scripts"`) with React 18 UMD + Babel standalone + Tailwind. Artifacts are interactive (state, sliders, toggles), and the system prompt requires every number in them to come from tool results.
-3. **Markdown/inline SVG** for everything simple — no forced visuals on yes/no questions.
+The source PDFs and all derived assets are committed. Evaluators do not rerun extraction.
 
-And multimodal goes **both directions**: attach a photo (downscaled client-side to ≤1568px, sent as an image content block through the Agent SDK) and the agent runs vision-based weld diagnosis against the manual's defect charts. Plus **voice input** (Web Speech API, Chrome/Edge) and a **stop button** that aborts generation cleanly mid-stream.
+One intentional limitation is treated honestly: the manual does not publish a numeric WFS/voltage-by-thickness matrix because the machine’s Auto Weld firmware computes it. The assistant gives the documented machine procedure and clearly labels general welding rules of thumb instead of presenting invented OmniPro settings.
 
-## Design decisions worth calling out
+## Reliability and security
 
-- **Curated KB over RAG or PDF-in-context.** A 48-page corpus doesn't need embeddings; it needs *fidelity*. Hand-curation with page cites made accuracy auditable, kept per-turn token cost low, and turned every figure into an addressable asset the UI can render. The `read_manual_page` vision tool remains as the escape hatch to primary sources.
-- **Tools stream UI events.** `show_figure` doesn't return an image to the model (wasted tokens) — it emits an SSE event to the browser and returns a short confirmation to the model. The model narrates around a figure it placed; the user sees it exactly where it belongs in the answer.
-- **Server isolation.** The Agent SDK runs with `settingSources: []`, no built-in tools (`tools: []`), and an allowlist of only the four manual tools — it's a product server, not a dev sandbox.
-- **Deterministic search.** Lexical scoring over heading-split sections. For 16 documents, deterministic-and-debuggable beats semantic-and-mysterious.
-- **Model:** `claude-opus-5` by default (override with `CLAUDE_MODEL` in `.env`). A typical multimodal answer costs $0.05–0.15.
-- One gotcha for fellow artifact-builders: unpkg's `@babel/standalone` now serves Babel 8, whose React transform emits ESM (`import {jsx} …`) that can't run in a classic inline script — pin `@babel/standalone@7`.
+- Server-owned opaque conversation tokens prevent clients from resuming arbitrary SDK sessions.
+- Sessions expire after six hours and are bound to the originating client.
+- Configurable request rate, concurrency, message, image, timeout, turn, and dollar limits.
+- SSE heartbeat plus anti-buffering headers and clean disconnect aborts.
+- No built-in shell or filesystem tools and no imported local settings.
+- Zod validation for source catalogs and MCP inputs.
+- Sandboxed artifact iframes with CSP, error bridge, readiness state, and no outbound fetch access.
+- Secret-safe multi-stage Docker build running as an unprivileged user.
+- CI runs typecheck, source/asset integrity, retrieval evaluation, production build, dependency audit, and Docker build.
 
-## What the agent is instructed to do (behavior contract)
+See [SECURITY.md](docs/SECURITY.md) for the trust boundaries and deployment controls.
 
-Search before answering; never guess numbers; cite pages; prefer real figures, then artifacts, then prose; ask exactly one clarifying question when the answer genuinely depends on unstated variables (process/voltage/wire/thickness) but lead with the most likely answer when possible; surface proportionate safety warnings (shade-10+, ventilation, duty cycle, no extension cords) without preaching; and correct misconceptions (like AC TIG) gently. See `server/prompt.ts` — it's short and readable.
+## Project map
 
-## Project structure
-
-```
-server/          Express + Agent SDK (index.ts, agent.ts, prompt.ts, knowledge.ts)
-web/             Vite + React chat UI (App, Message, ArtifactFrame, styles)
-data/            knowledge/*.md · specs.json · figures.json
-web/public/manual/  page renders + figure crops (committed)
-scripts/         extract_assets.py (one-time) · eval.ts (npm run eval) · ui_probe.mjs (headless UI test)
-docs/            CHALLENGE.md (original brief) · design doc · screenshots
-files/           original PDFs (untouched)
+```text
+server/                 API, Agent SDK loop, tools, retrieval, deterministic widgets
+web/src/                streaming chat, figures, citations, evidence, widgets, artifacts
+data/knowledge/         16 curated source-grounded task documents
+data/specs.json         exact machine-readable specifications
+data/figures.json       addressable figure catalog
+web/public/manual/      51 rendered pages + 29 figure crops
+scripts/                integrity, retrieval, live-agent, browser, extraction harnesses
+docs/                   challenge, design, benchmark, security, demo script, screenshots
+files/                  untouched source PDFs
 ```
 
 ## Screenshots
 
-| Landing | Manual figure surfaced (TIG polarity) |
+| Landing | TIG evidence response |
 |---|---|
-| ![Landing](docs/screenshots/landing.png) | ![TIG](docs/screenshots/tig-figure.png) |
+| ![Landing](docs/screenshots/landing.png) | ![TIG polarity with original manual figure and citations](docs/screenshots/tig-figure.png) |
 
-## Deploying (3 minutes)
+## Deployment
 
-The whole thing is one Node process, so hosting is trivial:
+The app is one stateless-facing Node service with an in-memory single-instance session map:
 
-- **Render:** connect the repo — `render.yaml` is a ready blueprint; set `ANTHROPIC_API_KEY` in the dashboard.
-- **Fly.io:** `fly launch --copy-config && fly secrets set ANTHROPIC_API_KEY=sk-... && fly deploy` (uses the included `Dockerfile` + `fly.toml`).
-- **Anywhere with Docker:** `docker build -t omnipro . && docker run -p 3001:3001 -e ANTHROPIC_API_KEY=sk-... omnipro`.
+- Render: connect the repository and use `render.yaml`; set `ANTHROPIC_API_KEY`.
+- Fly.io: `fly launch --copy-config && fly secrets set ANTHROPIC_API_KEY=... && fly deploy`.
+- Docker: `docker build -t omnipro . && docker run -p 3001:3001 -e ANTHROPIC_API_KEY=... omnipro`.
 
-## Future work
+For a multi-replica production deployment, replace the in-memory session/rate stores with Redis. For this challenge’s single-instance deployment, the included implementation deliberately keeps setup below two minutes.
 
-Hosting (the server is a single Node process — Fly/Render-ready), spoken responses (TTS out), streaming artifact preview while the block is still generating, and generalizing the extraction pipeline to any product manual — which is, after all, the point.
+## Demo walkthrough
+
+The recommended four-minute recording sequence is in [docs/DEMO.md](docs/DEMO.md): exact duty-cycle widget, porosity cross-reference, visual TIG setup, image-only process selection, honest ambiguity handling, a weld-photo diagnosis, benchmark results, then the six-tool architecture.

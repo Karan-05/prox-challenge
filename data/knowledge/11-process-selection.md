@@ -25,7 +25,7 @@ The selection chart ("HOW TO CHOOSE A WELDER") compares the four processes. Firs
 | Welds over mill scale and rust | — | ✓ |
 | Clean welds, minimal surface prep | ✓ | — |
 | Usable outdoors in windy conditions | — | ✓ |
-| Deep weld penetration, handles material caps well | — | ✓ |
+| Deep weld penetration, handles material gaps well | — | ✓ |
 | Thin materials like sheet metal | ✓ | — |
 
 The chart repeats the duty-cycle example: 165A @ 30% duty cycle = 3 minutes welding, 7 minutes resting per 10-minute period.

@@ -4,18 +4,31 @@
   "private": true,
   "type": "module",
   "description": "Multimodal reasoning agent for the Vulcan OmniPro 220 welder, built on the Claude Agent SDK",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "concurrently -k -n server,web -c yellow,cyan \"npm run dev:server\" \"npm run dev:web\"",
     "dev:server": "tsx watch server/index.ts",
     "dev:web": "vite --config web/vite.config.ts",
     "build": "vite build --config web/vite.config.ts",
+    "typecheck": "tsc --noEmit",
+    "check:data": "tsx scripts/check-data.ts",
+    "eval:retrieval": "tsx scripts/eval-retrieval.ts",
+    "check": "npm run typecheck && npm run check:data && npm run eval:retrieval && npm run build",
     "start": "npm run build && NODE_ENV=production tsx server/index.ts",
-    "eval": "tsx scripts/eval.ts"
+    "test:ui": "node scripts/ui_probe.mjs",
+    "eval": "tsx scripts/eval.ts --smoke",
+    "eval:full": "tsx scripts/eval.ts --full"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.3.0",
+    "@babel/standalone": "^7.26.4",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsx": "^4.19.0",
     "zod": "^4.0.0"
   },
   "devDependencies": {
@@ -23,14 +36,11 @@
     "@types/node": "^22.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.0",
+    "@vitejs/plugin-react": "^6.0.5",
     "concurrently": "^9.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "react-markdown": "^9.0.1",
     "remark-gfm": "^4.0.0",
-    "tsx": "^4.19.0",
     "typescript": "^5.6.0",
-    "vite": "^5.4.0"
+    "vite": "^8.2.1"
   }
 }

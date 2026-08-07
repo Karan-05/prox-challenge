@@ -1,5 +1,12 @@
 node_modules/
 web/dist/
 .env
+.env.*
+!.env.example
 .DS_Store
 *.log
+.firecrawl/
+__pycache__/
+*.py[cod]
+eval/results/*.json
+!eval/results/.gitkeep

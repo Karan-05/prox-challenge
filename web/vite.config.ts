@@ -10,7 +10,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    proxy: { "/api": "http://localhost:3001" },
+    proxy: {
+      "/api": "http://localhost:3001",
+      "/artifact-runtime": "http://localhost:3001",
+    },
   },
-  build: { outDir: path.join(here, "dist"), emptyOutDir: true },
+  // copyPublicDir=false: the server serves web/public directly, so bundling
+  // the 23MB of manual imagery into dist would ship every image twice.
+  build: { outDir: path.join(here, "dist"), emptyOutDir: true, copyPublicDir: false },
 });
