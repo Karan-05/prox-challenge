@@ -14,6 +14,7 @@ export type Block =
 export interface Msg {
   role: "user" | "assistant";
   blocks: Block[];
+  images?: string[]; // data URLs of user-attached photos
   status?: string | null; // live tool status while streaming
   error?: string;
 }

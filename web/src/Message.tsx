@@ -12,6 +12,13 @@ export default function Message({ msg, streaming }: { msg: Msg; streaming: boole
     <div className={`msg ${msg.role}`}>
       {msg.role === "assistant" && <div className="avatar">⚡</div>}
       <div className="bubble">
+        {msg.images && msg.images.length > 0 && (
+          <div className="attach-strip">
+            {msg.images.map((src, i) => (
+              <img key={i} src={src} alt="attached" />
+            ))}
+          </div>
+        )}
         {msg.blocks.map((b, i) => (
           <BlockView key={i} block={b} streaming={streaming && i === msg.blocks.length - 1} />
         ))}

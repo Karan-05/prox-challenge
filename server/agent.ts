@@ -30,11 +30,18 @@ const SPEC_TOPICS = Object.keys(specs) as string[];
  * Runs one agent turn. Tool handlers close over `emit`, so figure directives
  * stream to the UI at the moment the model calls the tool.
  */
+export interface UserImage {
+  /** base64 payload, no data: prefix */
+  data: string;
+  mimeType: string;
+}
+
 export async function runAgent(
   message: string,
   sessionId: string | undefined,
   emit: (e: ChatEvent) => void,
   signal?: AbortSignal,
+  images?: UserImage[],
 ): Promise<void> {
   const mcp = createSdkMcpServer({
     name: "manual",
@@ -129,8 +136,35 @@ export async function runAgent(
     ],
   });
 
+  // Text-only goes as a plain string; with photos we stream one user message
+  // whose content mixes image blocks (e.g. the user's weld bead) and text.
+  const prompt =
+    !images || images.length === 0
+      ? message
+      : (async function* () {
+          yield {
+            type: "user" as const,
+            message: {
+              role: "user" as const,
+              content: [
+                ...images.map((img) => ({
+                  type: "image" as const,
+                  source: {
+                    type: "base64" as const,
+                    media_type: img.mimeType,
+                    data: img.data,
+                  },
+                })),
+                { type: "text" as const, text: message },
+              ],
+            },
+            parent_tool_use_id: null,
+            session_id: sessionId ?? "",
+          };
+        })();
+
   const stream = query({
-    prompt: message,
+    prompt: prompt as any,
     options: {
       model: process.env.CLAUDE_MODEL || "claude-opus-5",
       systemPrompt: SYSTEM_PROMPT,

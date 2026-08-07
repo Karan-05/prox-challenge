@@ -25,8 +25,9 @@ Try the suggestion chips, or these:
 - *"What polarity setup do I need for TIG?"* → the real hookup diagram from p.24, torch→negative, ground→positive
 - *"Which process should I use for 16-gauge sheet?"* → reasoning over the image-only selection chart
 - *"Can I TIG weld aluminum with this?"* → correctly says no (DC TIG only) and routes you to the spool-gun option
+- **Drop in a photo of your weld bead** (📷 button or drag & drop) → the agent describes what it sees, matches it to the manual's defect charts, shows the matching chart beside your photo, and gives the causes→fixes for that pattern. In testing it even caught that a "user photo" was actually the manual's own porosity diagram — and said so before diagnosing.
 
-There's also a scripted accuracy check: `npm run eval` runs the hard questions end-to-end and asserts the key facts, figures, and artifacts appear. Current result: **6/6**.
+There's also a scripted accuracy check: `npm run eval` runs the hard questions end-to-end and asserts the key facts, figures, and artifacts appear — including cross-referencing probes (birdnesting → tension + tip + liner across three manual sections), out-of-scope honesty (spool-gun WFS), and safety cross-refs (vehicle welding → battery disconnect). Current result: **9/9**.
 
 ## How it works
 
@@ -66,7 +67,7 @@ Honesty is designed in: the manual doesn't publish a WFS/voltage-per-thickness m
 2. **Generated interactive artifacts** for cognitively heavy answers — Claude-Artifacts-style. The agent emits `artifact:react|svg|html` fenced blocks; the client renders them in a sandboxed iframe (`sandbox="allow-scripts"`) with React 18 UMD + Babel standalone + Tailwind. Artifacts are interactive (state, sliders, toggles), and the system prompt requires every number in them to come from tool results.
 3. **Markdown/inline SVG** for everything simple — no forced visuals on yes/no questions.
 
-Plus **voice input** (Web Speech API, Chrome/Edge) — handy when your gloves are off but your hands are full.
+And multimodal goes **both directions**: attach a photo (downscaled client-side to ≤1568px, sent as an image content block through the Agent SDK) and the agent runs vision-based weld diagnosis against the manual's defect charts. Plus **voice input** (Web Speech API, Chrome/Edge) and a **stop button** that aborts generation cleanly mid-stream.
 
 ## Design decisions worth calling out
 
@@ -98,6 +99,14 @@ files/           original PDFs (untouched)
 | Landing | Manual figure surfaced (TIG polarity) |
 |---|---|
 | ![Landing](docs/screenshots/landing.png) | ![TIG](docs/screenshots/tig-figure.png) |
+
+## Deploying (3 minutes)
+
+The whole thing is one Node process, so hosting is trivial:
+
+- **Render:** connect the repo — `render.yaml` is a ready blueprint; set `ANTHROPIC_API_KEY` in the dashboard.
+- **Fly.io:** `fly launch --copy-config && fly secrets set ANTHROPIC_API_KEY=sk-... && fly deploy` (uses the included `Dockerfile` + `fly.toml`).
+- **Anywhere with Docker:** `docker build -t omnipro . && docker run -p 3001:3001 -e ANTHROPIC_API_KEY=sk-... omnipro`.
 
 ## Future work
 

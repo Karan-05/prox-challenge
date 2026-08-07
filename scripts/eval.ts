@@ -43,6 +43,21 @@ const CASES: Case[] = [
     // Ambiguous — expect a clarifying question or explicit variant handling
     mustMatch: [/thickness|process|which|what.*(wire|gauge|thick)|\?/i],
   },
+  {
+    // Cross-referencing: setup procedure (p.15/17) + troubleshooting matrix (p.42)
+    q: "My wire keeps birdnesting at the feed rollers. Why?",
+    mustMatch: [/tension|pressure/i, /contact tip/i, /liner|connector/i],
+  },
+  {
+    // Honesty out-of-scope: manual defers spool gun operation to its own manual
+    q: "What wire feed speed should I run for aluminum with the spool gun?",
+    mustMatch: [/spool gun/i, /manual|separate|sold separately/i],
+  },
+  {
+    // Safety cross-reference: vehicle welding notice (pp.19, 29)
+    q: "I want to weld a bracket on my truck frame. Anything special I should do first?",
+    mustMatch: [/batter/i, /disconnect/i],
+  },
 ];
 
 async function run(idx: number, c: Case): Promise<boolean> {

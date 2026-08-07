@@ -1,0 +1,12 @@
+# One-click deploy on Render: https://render.com/docs/blueprints
+services:
+  - type: web
+    name: omnipro-agent
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false # set in the Render dashboard
+      - key: CLAUDE_MODEL
+        value: claude-opus-5
